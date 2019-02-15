@@ -25,7 +25,7 @@ dateSlider.oninput = function() {
 //define AJAX function
 function jQueryAjaxStates(){
     //basic jQuery ajax method
-    $.ajax("assets/data/States.geojson", {
+    $.ajax("assets/data/StatesGini.geojson", {
         dataType: "json",
         success: callback
     });
