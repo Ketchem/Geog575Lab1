@@ -7,6 +7,10 @@
     /* margin-top: 25px; */
 }
 
+.container{
+    margin: 0;
+    max-width: 1500px;
+}
 
 #loadButton{
     justify-items: center;
