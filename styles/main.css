@@ -1,3 +1,7 @@
+.title{
+    margin-bottom: 20px;
+}
+
 #map{
     /* height: 700px;
     width: 1400px; */
@@ -8,8 +12,10 @@
 }
 
 .container{
+    background-color: beige;
     margin: 0;
-    max-width: 1500px;
+    max-width: 1800px;
+    height: 100%
 }
 
 #loadButton{
