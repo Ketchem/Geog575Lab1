@@ -107,7 +107,7 @@ function getPopup(feature){
     //         popupContent += "<p>" + property + ": " + feature.properties[property] + "</p>";
     //     }
     // }
-    popupContent += "<p>" + "State" + ": " + feature.properties["State"] + "</p>";
+    popupContent += "<p>" + "State" + ": " + feature.properties["stateName"] + "</p>";
     popupContent += "<p>" + attribute + ": " + feature.properties[attribute] + "</p>";
     //popupContent += "<p>" + "Radius" + ": " + getRadius() + "</p>";
     
