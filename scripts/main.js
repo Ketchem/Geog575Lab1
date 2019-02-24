@@ -1,3 +1,7 @@
+// TODO: Add additional slider for year
+// TODO: Create Legend
+// TODO: Create informational panel 
+
 // mapbox access token
 var accessToken = 'pk.eyJ1Ijoia2V0Y2hlbTIiLCJhIjoiY2pjYzQ5ZmFpMGJnbTM0bW01ZjE5Z2RiaiJ9.phQGyL1FqTJ-UlQuD_UFpg';
 //  mapbox tiles
@@ -9,6 +13,7 @@ var map = L.map('map', {
     center: [38, -96], 
     zoom: 4
 });
+
 
 var activeLayer;
 
@@ -64,10 +69,26 @@ function callback(response, status, jqXHRobject){
     activeLayer = L.geoJSON(features, {
         pointToLayer: function(feature, latlng){;
             var popupContent = ""
-            return L.circleMarker(latlng, createPropSymbols(feature)).bindPopup(getPopup(feature));
+            //return L.circleMarker(latlng, createPropSymbols(feature)).bindPopup(getPopup(feature));
+            var layer = L.circleMarker(latlng, createPropSymbols(feature));
+            var popup = getPopup(feature);
+            layer.bindPopup(popup);
+            return layer;
         }
     });
     activeLayer.addTo(map);
+
+    // activeLayer.on({
+    //     mouseover: function(){
+    //         //this.openPopup();
+    //         console.log(this);
+    //     },
+    //     mouseout: function(){
+    //         //this.closePopup();
+    //         console.log(this);
+    //     }
+    // });
+
 };
 
 // create the popup content
