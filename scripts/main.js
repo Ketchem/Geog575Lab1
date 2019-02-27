@@ -1,15 +1,6 @@
-// TODO: Add additional slider for year
+// TODO: Add additional slider for ?
 // TODO: Create Legend
 // TODO: Create informational panel 
-
-//GOAL: Proportional symbols representing attribute values of mapped features
-//STEPS:
-//1. Create the Leaflet map
-//2. Import GeoJSON data--done (in getData())
-//3. Add circle markers for point features to the map--done (in AJAX callback)
-//4. Determine which attribute to visualize with proportional symbols
-//5. For each feature, determine its value for the selected attribute
-//6. Give each feature's circle marker a radius based on its attribute value
 
 // --------------------------------------------------------------------------
 //1. Create the Leaflet map
@@ -190,3 +181,29 @@ function updateYear(year){
     $("#featureInfo").html("");
     output.innerHTML = dateSlider.value; 
 };
+
+function createSequenceControls(map, attributes){   
+    var SequenceControl = L.Control.extend({
+        options: {
+            position: 'bottomleft'
+        },
+
+        onAdd: function (map) {
+            // create the control container div with a particular class name
+            var container = L.DomUtil.create('div', 'sequence-control-container');
+
+            //create range input element (slider)
+            $(container).append('<input class="range-slider" min="1990" max="2018" value="1" type="range" id="mapSlider">');
+
+            return container;
+        }
+    });
+
+    map.addControl(new SequenceControl());
+}
+
+createSequenceControls(map);
+
+$("#mapSlider").change(function(){
+    console.log(this.value);
+});
