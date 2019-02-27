@@ -161,6 +161,7 @@ $("#back").click(function(){
         year = Number(year) - 1;
         updateYear(year);
     }
+    console.log("button clicked");
 });
 
 $("#forward").click(function(){
@@ -168,6 +169,8 @@ $("#forward").click(function(){
         year = Number(year) + 1;
         updateYear(year);
     }
+    console.log("button clicked");
+
 });
 
 function updateYear(year){
