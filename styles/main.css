@@ -80,3 +80,7 @@
   .leaflet-popup-content p{
     margin: 0.2em 0;
   }
+
+  #featureInfo{
+      display: block;
+  }

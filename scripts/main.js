@@ -60,6 +60,7 @@ dateSlider.addEventListener("change", function(){
     else {
         jQueryAjaxStates();
     }
+    $("#featureInfo").html("");
 });
 
 //define AJAX function
@@ -101,6 +102,9 @@ function createLayer(response, status, jqXHRobject){
                 },
                 mouseout: function(){
                     this.closePopup();
+                },
+                click: function(){
+                    $("#featureInfo").html(popupContent);
                 }
             });
 
