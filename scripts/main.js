@@ -164,7 +164,7 @@ $("#back").click(function(){
 });
 
 $("#forward").click(function(){
-    if (year < 2019){
+    if (year < 2018){
         year = Number(year) + 1;
         updateYear(year);
     }
