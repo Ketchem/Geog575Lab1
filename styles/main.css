@@ -76,3 +76,7 @@
     background: #4CAF50;
     cursor: pointer;
   }
+
+  .leaflet-popup-content p{
+    margin: 0.2em 0;
+  }
