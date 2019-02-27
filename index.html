@@ -11,6 +11,7 @@
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"/>
         <link rel="stylesheet" href="styles/main.css">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     </head>
     <body>
         <div class="container">
@@ -21,14 +22,14 @@
             </div>
             <div class="row">
                 <div class="col-md-3 float-left" id="panel">
-                    <!-- <div class="row" id = "buttons">
-                        <button class="col-sm-12">Load Cities</button>
-                        <button class="col-sm-12">Load States</button>
-                        <button class="col-sm-12">Remove Points</button>
-                    </div> -->
                     <div class="row">
                             <input type="range" min="1990" max="2018" value="1" class="slider" id="year">
                             <p>Year: <span id="yearDisplay"></span></p>
+                    </div>
+                    <div class="row">
+                        <button id="back"><i class="fa fa-step-backward"></i></button>
+                        <button id="play"><i class="fa fa-play"></i></button>
+                        <button id="forward"><i class="fa fa-step-forward"></i></button>
                     </div>
                     <div class="row" id="featureInfo">
                     </div>
@@ -45,7 +46,7 @@
 
 
          <!-- Make sure you put this AFTER Leaflet's CSS -->
-         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
         <script type="text/javascript" src="scripts/main.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"></script>

@@ -49,18 +49,7 @@ jQueryAjaxStates();
 // Changes the display data when the slider date is changed
 dateSlider.addEventListener("change", function(){
     year = this.value;
-    attribute = "gini" + year;
-    //check for layer
-    if(activeLayer){
-        //remove old layer
-        map.removeLayer(activeLayer);
-        //add new layer
-        jQueryAjaxStates();
-    }
-    else {
-        jQueryAjaxStates();
-    }
-    $("#featureInfo").html("");
+    updateYear(year);
 });
 
 //define AJAX function
@@ -166,3 +155,35 @@ function getRadius(gini){
         return 24;
     }
 }
+
+$("#back").click(function(){
+    if (year > 1990){
+        year = Number(year) - 1;
+        updateYear(year);
+    }
+});
+
+$("#forward").click(function(){
+    if (year < 2019){
+        year = Number(year) + 1;
+        updateYear(year);
+    }
+});
+
+function updateYear(year){
+    //year = dateSlider.value;
+    dateSlider.value = year;
+    attribute = "gini" + year;
+    //check for layer
+    if(activeLayer){
+        //remove old layer
+        map.removeLayer(activeLayer);
+        //add new layer
+        jQueryAjaxStates();
+    }
+    else {
+        jQueryAjaxStates();
+    }
+    $("#featureInfo").html("");
+    output.innerHTML = dateSlider.value; 
+};
