@@ -63,7 +63,17 @@ function createLegend(map, attributes){
             // create the control container with a particular class name
             var container = L.DomUtil.create('div', 'legend-control-container');
 
-            //PUT YOUR SCRIPT TO CREATE THE TEMPORAL LEGEND HERE
+            var svg = createLegendCircle(34);
+
+            $(container).append("<p>Year <span>1990</span></p>");
+            //add attribute legend svg to container
+            // console.log(svg);
+
+            for (var i = 3; i>0; i--){
+                var svg = createLegendCircle(8*i*2);
+                $(container).append(svg);
+            }
+            // $(container).append(svg);
 
             return container;
         }
@@ -82,7 +92,7 @@ var year = dateSlider.value;
 // console.log(year);
 var attribute = "gini" + year;
 
-$(".legend-control-container").html("Year " + dateSlider.value);
+//$(".legend-control-container").html("Year " + dateSlider.value);
 
 // output.innerHTML = dateSlider.value; 
 // dateSlider.oninput = function() {
@@ -238,9 +248,21 @@ function updateYear(year){
         jQueryAjaxStates();
     }
     $("#featureInfo").html("");
-    $(".legend-control-container").html("Year " + dateSlider.value);
+    //$(".legend-control-container").html("Year " + dateSlider.value);
 };
 
+
+function createLegendCircle(diameter){
+    //Step 1: start attribute legend svg string
+    var svg = '<svg x="0px" y="0px"'
+    svg += 'width="' + diameter + 'px" height="'+diameter +'px" viewBox="0 0 180 180" enable-background="new 0 0 180 180" xml:space="preserve">'
+    svg+= '<g opacity="0.8">'
+    svg += '<circle fill="#FF7800" cx="90" cy="90" r="90"/>'
+    svg += '<path d="M90,1c49.0748,0,89,39.9252,89,89s-39.9252,89-89,89S1,139.0748,1,90S40.9252,1,90,1 M90,0C40.2944,0,0,40.2944,0,90'
+    svg += 's40.2944,90,90,90s90-40.2944,90-90S139.7056,0,90,0L90,0z"/></g></svg>';
+
+    return svg;
+};
 
 
 $("#mapSlider").change(function(){
