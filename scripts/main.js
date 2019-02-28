@@ -16,19 +16,78 @@ var map = L.map('map', {
     zoom: 4
 });
 
-var activeLayer;
-var dateSlider = document.querySelector("#year");
-var output = document.getElementById("yearDisplay");
-var year = dateSlider.value;
-var attribute = "gini" + year;
-
 // add the mapbox tiles to the map object
 map.addLayer(mapboxTiles)
 // displays the date slider value on the page
-output.innerHTML = dateSlider.value; 
-dateSlider.oninput = function() {
-    output.innerHTML = this.value;
+
+// create the slider on the map
+function createSequenceControls(map, attributes){   
+    var SequenceControl = L.Control.extend({
+        options: {
+            position: 'bottomleft'
+        },
+
+        onAdd: function (map) {
+            // create the control container div with a particular class name
+            var container = L.DomUtil.create('div', 'sequence-control-container');
+
+            $(container).append('<button class = "mapControls" id="back"><i class="fa fa-step-backward"></i></button>');
+
+            //create range input element (slider)
+            $(container).append('<input class="range-slider mapControls" min="1990" max="2018" value="1" type="range" id="mapSlider">');
+
+            $(container).append('<button class = "mapControls" id="forward"><i class="fa fa-step-forward"></i></button>');
+            $(container).append('<button id="play"><i class="fa fa-play"></i></button>');
+
+            $(container).on('mousedown dblclick', function(e){
+                L.DomEvent.stopPropagation(e);
+            });
+
+            return container;
+        }
+    });
+
+    map.addControl(new SequenceControl());
 }
+
+createSequenceControls(map);
+
+
+function createLegend(map, attributes){
+    var LegendControl = L.Control.extend({
+        options: {
+            position: 'bottomright'
+        },
+
+        onAdd: function (map) {
+            // create the control container with a particular class name
+            var container = L.DomUtil.create('div', 'legend-control-container');
+
+            //PUT YOUR SCRIPT TO CREATE THE TEMPORAL LEGEND HERE
+
+            return container;
+        }
+    });
+
+    map.addControl(new LegendControl());
+};
+
+createLegend(map);
+
+
+var activeLayer;
+var dateSlider = document.querySelector("#mapSlider");
+//var output = document.getElementById("yearDisplay");
+var year = dateSlider.value;
+// console.log(year);
+var attribute = "gini" + year;
+
+$(".legend-control-container").html("Year " + dateSlider.value);
+
+// output.innerHTML = dateSlider.value; 
+// dateSlider.oninput = function() {
+//     output.innerHTML = this.value;
+// }
 // --------------------------------------------------------------------------
 //2. Import GeoJSON data
 //3. Add circle markers for point features to the map - in callback
@@ -152,7 +211,7 @@ $("#back").click(function(){
         year = Number(year) - 1;
         updateYear(year);
     }
-    console.log("button clicked");
+    // console.log("button clicked");
 });
 
 $("#forward").click(function(){
@@ -160,7 +219,7 @@ $("#forward").click(function(){
         year = Number(year) + 1;
         updateYear(year);
     }
-    console.log("button clicked");
+    // console.log("button clicked");
 
 });
 
@@ -179,30 +238,10 @@ function updateYear(year){
         jQueryAjaxStates();
     }
     $("#featureInfo").html("");
-    output.innerHTML = dateSlider.value; 
+    $(".legend-control-container").html("Year " + dateSlider.value);
 };
 
-function createSequenceControls(map, attributes){   
-    var SequenceControl = L.Control.extend({
-        options: {
-            position: 'bottomleft'
-        },
 
-        onAdd: function (map) {
-            // create the control container div with a particular class name
-            var container = L.DomUtil.create('div', 'sequence-control-container');
-
-            //create range input element (slider)
-            $(container).append('<input class="range-slider" min="1990" max="2018" value="1" type="range" id="mapSlider">');
-
-            return container;
-        }
-    });
-
-    map.addControl(new SequenceControl());
-}
-
-createSequenceControls(map);
 
 $("#mapSlider").change(function(){
     console.log(this.value);

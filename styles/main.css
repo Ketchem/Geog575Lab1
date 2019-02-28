@@ -84,3 +84,36 @@
   #featureInfo{
       display: block;
   }
+
+  .sequence-control-container {
+    width: 350px;
+    height: 30px;
+    background-color: rgba(255,255,255,0.8);
+    padding: 3px;
+    /* line-height: 45px; */
+    text-align: center;
+    border: solid gray 1px;
+}
+
+.range-slider {
+    width: 200px;
+}
+
+#mapSlider{
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+#play{
+    margin-left: 3px;
+}
+
+.legend-control-container {
+    width: auto;
+    height: 30px;
+    background-color: rgba(255,255,255,0.8);
+    padding: 3px;
+    /* line-height: 45px; */
+    text-align: center;
+    border: solid gray 1px;
+}
