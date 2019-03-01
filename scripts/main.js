@@ -19,6 +19,7 @@ var map = L.map('map', {
 });
 // Layer of objects to be manipulated
 var activeLayer;
+var filterVal = 0;
 // END DEFINE GLOBAL VARIABLES
 // --------------------------------------------------------------------------
 
@@ -43,7 +44,7 @@ var attribute = "gini" + year;
 
 // --------------------------------------------------------------------------
 // LOAD THE STARTUP LAYER
-jQueryAjaxStates();
+getPoints();
 // END LOAD THE STARTUP LAYER
 // --------------------------------------------------------------------------
 
@@ -54,7 +55,7 @@ jQueryAjaxStates();
 // Changes the display data when the slider date is changed
 dateSlider.addEventListener("change", function(){
     year = this.value;
-    updateMap(year); // Change
+    updateMap(year);
     updateLegend(year);
 });
 
@@ -76,6 +77,26 @@ $("#forward").click(function(){
     // console.log("button clicked");
 
 });
+
+$("#max").click(function(){
+    filterVal = 3;
+    updateMap(year);
+});
+
+$("#mean").click(function(){
+    filterVal = 2;
+    updateMap(year);
+});
+
+$("#min").click(function(){
+    filterVal = 1;
+    updateMap(year);
+});
+
+$("#resetMap").click(function(){
+    alert("Clicked!");
+});
+
 // END ADD EVENT LISTENERS
 // --------------------------------------------------------------------------
 
@@ -91,10 +112,10 @@ function updateMap(year){
         //remove old layer
         map.removeLayer(activeLayer);
         //add new layer
-        jQueryAjaxStates();
+        getPoints();
     }
     else {
-        jQueryAjaxStates();
+        getPoints();
     }
     $("#featureInfo").html("");
     //$(".legend-control-container").html("Year " + dateSlider.value);
@@ -117,7 +138,7 @@ function updateLegend(year){
         });
 
         //Step 4: add legend text
-        $('#'+key+'-text').text(circleText[key] +  " Gini");
+        $('#'+key+'-text').text(circleText[key]);
     };
 
 };
@@ -144,14 +165,17 @@ function getCircleValues(){
 function getRadius(gini){
     // Used Natural Breaks (Jenks) for gini 2018 values
     // 0 - .462 | .463 - .494 | .495 - above
-    if (gini <= .462){
+    if (gini <= .462 && (filterVal === 0 || filterVal === 1)){
         return 8;
     }
-    else if (gini > .462 && gini <= .494){
+    else if (gini > .462 && gini <= .494 && (filterVal === 0 || filterVal === 2)){
         return 16;
     }
-    else {
+    else if (gini > .494 && (filterVal === 0 || filterVal === 3)){
         return 24;
+    }
+    else {
+        return 0;
     }
 }
 
@@ -182,7 +206,7 @@ function getPopup(feature){
 
 
 //define AJAX function
-function jQueryAjaxStates(){
+function getPoints(){
     //basic jQuery ajax method
     $.ajax("assets/data/StatesGini.geojson", {
         dataType: "json",
@@ -194,7 +218,16 @@ function jQueryAjaxStates(){
 function createLayer(response, status, jqXHRobject){
     // get the features
     var features = response;
+    console.log(features);
+    if (filterVal === 1){
+        
+    }
+    else if (filterVal === 2){
 
+    }
+    else if (filterVal === 3){
+
+    }
     // Set the variable active layer = to leaflet layer created from the features
     activeLayer = L.geoJSON(features, {
         // create the layer from points
@@ -282,7 +315,7 @@ function createLegend(map, attributes){
         onAdd: function (map) {
             // create the control container with a particular class name
             var container = L.DomUtil.create('div', 'legend-control-container');
-            $(container).append('<p class = "legendText">Year <span id="legendYear">1990</span></p>');
+            $(container).append('<p class = "legendText">Gini Year <span id="legendYear">1990</span></p>');
 
             //add temporal legend div to container
             $(container).append('<div id="temporal-legend">')
@@ -320,6 +353,7 @@ function createLegend(map, attributes){
     map.addControl(new LegendControl());
     updateLegend(year);
 };
+
 
 // END DEFINE FUNCTIONS
 // --------------------------------------------------------------------------

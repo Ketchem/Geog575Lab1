@@ -121,3 +121,9 @@
 .legendText{
     margin: 0;
 }
+
+#resetMapContainer{
+    position: absolute;
+    padding-right: 18px;
+    padding-top: 8px; 
+}
