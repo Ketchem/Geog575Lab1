@@ -1,6 +1,9 @@
-// TODO: Add additional slider for ?
-// TODO: Create Legend
-// TODO: Create informational panel 
+// TODO: Fix Slider (moves map when dragging)
+// TODO: Fix Legend (stack symbols, add text)
+// TODO: Adjust informational panel 
+// TODO: Add 5th Map Function
+// TODO: Add Mouse down function to slider buttons
+// TODO: Animate Play Button
 
 // --------------------------------------------------------------------------
 //1. Create the Leaflet map
