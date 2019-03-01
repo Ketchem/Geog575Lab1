@@ -117,3 +117,7 @@
     text-align: center;
     border: solid gray 1px;
 }
+
+.legendText{
+    margin: 0;
+}

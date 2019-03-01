@@ -1,12 +1,11 @@
-// TODO: Fix Slider (moves map when dragging)
-// TODO: Fix Legend (stack symbols, add text)
+// TODO: Fix Legend (Add text)
 // TODO: Adjust informational panel 
 // TODO: Add 5th Map Function
 // TODO: Add Mouse down function to slider buttons
 // TODO: Animate Play Button
 
 // --------------------------------------------------------------------------
-//1. Create the Leaflet map
+// DEFINE GLOBAL VARIABLES
 // mapbox access token
 var accessToken = 'pk.eyJ1Ijoia2V0Y2hlbTIiLCJhIjoiY2pjYzQ5ZmFpMGJnbTM0bW01ZjE5Z2RiaiJ9.phQGyL1FqTJ-UlQuD_UFpg';
 //  mapbox tiles
@@ -18,102 +17,169 @@ var map = L.map('map', {
     center: [38, -96], 
     zoom: 4
 });
+// Layer of objects to be manipulated
+var activeLayer;
+// END DEFINE GLOBAL VARIABLES
+// --------------------------------------------------------------------------
 
+// --------------------------------------------------------------------------
+// BUILD MAP
 // add the mapbox tiles to the map object
 map.addLayer(mapboxTiles)
 // displays the date slider value on the page
-
-// create the slider on the map
-function createSequenceControls(map, attributes){   
-    var SequenceControl = L.Control.extend({
-        options: {
-            position: 'bottomleft'
-        },
-
-        onAdd: function (map) {
-            // create the control container div with a particular class name
-            var container = L.DomUtil.create('div', 'sequence-control-container');
-
-            $(container).append('<button class = "mapControls" id="back"><i class="fa fa-step-backward"></i></button>');
-
-            //create range input element (slider)
-            $(container).append('<input class="range-slider mapControls" min="1990" max="2018" value="1" type="range" id="mapSlider">');
-
-            $(container).append('<button class = "mapControls" id="forward"><i class="fa fa-step-forward"></i></button>');
-            $(container).append('<button id="play"><i class="fa fa-play"></i></button>');
-
-            $(container).on('mousedown dblclick', function(e){
-                L.DomEvent.stopPropagation(e);
-            });
-
-            return container;
-        }
-    });
-
-    map.addControl(new SequenceControl());
-}
-
 createSequenceControls(map);
-
-
-function createLegend(map, attributes){
-    var LegendControl = L.Control.extend({
-        options: {
-            position: 'bottomright'
-        },
-
-        onAdd: function (map) {
-            // create the control container with a particular class name
-            var container = L.DomUtil.create('div', 'legend-control-container');
-
-            var svg = createLegendCircle(34);
-
-            $(container).append("<p>Year <span>1990</span></p>");
-            //add attribute legend svg to container
-            // console.log(svg);
-
-            for (var i = 3; i>0; i--){
-                var svg = createLegendCircle(8*i*2);
-                $(container).append(svg);
-            }
-            // $(container).append(svg);
-
-            return container;
-        }
-    });
-
-    map.addControl(new LegendControl());
-};
-
+// Creates the temporal legend and Symbols
 createLegend(map);
+// END BUILD MAP
+// --------------------------------------------------------------------------
 
-
-var activeLayer;
+// --------------------------------------------------------------------------
+// DEFINE MAP DEPENDANT VARIABLES 
 var dateSlider = document.querySelector("#mapSlider");
-//var output = document.getElementById("yearDisplay");
 var year = dateSlider.value;
-// console.log(year);
 var attribute = "gini" + year;
-
-//$(".legend-control-container").html("Year " + dateSlider.value);
-
-// output.innerHTML = dateSlider.value; 
-// dateSlider.oninput = function() {
-//     output.innerHTML = this.value;
-// }
+// END DEFINE MAP DEPENDANT VARIABLES 
 // --------------------------------------------------------------------------
-//2. Import GeoJSON data
-//3. Add circle markers for point features to the map - in callback
-// calls the funciton to load the first layer
+
+// --------------------------------------------------------------------------
+// LOAD THE STARTUP LAYER
 jQueryAjaxStates();
+// END LOAD THE STARTUP LAYER
 // --------------------------------------------------------------------------
 
 
+
+// --------------------------------------------------------------------------
+// ADD EVENT LISTENERS
 // Changes the display data when the slider date is changed
 dateSlider.addEventListener("change", function(){
     year = this.value;
-    updateYear(year);
+    updateMap(year); // Change
+    updateLegend(year);
 });
+
+$("#back").click(function(){
+    if (year > 1990){
+        year = Number(year) - 1;
+        updateMap(year);
+        updateLegend(year);
+    }
+    // console.log("button clicked");
+});
+
+$("#forward").click(function(){
+    if (year < 2018){
+        year = Number(year) + 1;
+        updateMap(year);
+        updateLegend(year);
+    }
+    // console.log("button clicked");
+
+});
+// END ADD EVENT LISTENERS
+// --------------------------------------------------------------------------
+
+// --------------------------------------------------------------------------
+// DEFINE FUNCTIONS
+
+function updateMap(year){
+    //year = dateSlider.value;
+    dateSlider.value = year;
+    attribute = "gini" + year;
+    //check for layer
+    if(activeLayer){
+        //remove old layer
+        map.removeLayer(activeLayer);
+        //add new layer
+        jQueryAjaxStates();
+    }
+    else {
+        jQueryAjaxStates();
+    }
+    $("#featureInfo").html("");
+    //$(".legend-control-container").html("Year " + dateSlider.value);
+};
+
+function updateLegend(year){
+    $("#legendYear").html(year);
+
+    var circleRadii = getCircleRadii();
+    var circleText = getCircleValues();
+
+    for (var key in circleRadii){
+        //get the radius
+        var radius = circleRadii[key];
+
+        //Step 3: assign the cy and r attributes
+        $('#'+key).attr({
+            cy: 59 - radius,
+            r: radius
+        });
+
+        //Step 4: add legend text
+        $('#'+key+'-text').text(circleText[key] +  " Gini");
+    };
+
+};
+
+function getCircleRadii(){
+    // return values as an object
+    // Values are hard coded from Jenks Natural Breaks definied in getRadius
+    return {
+        max: 24,
+        mean: 16,
+        min: 8
+    };
+};
+
+function getCircleValues(){
+    return {
+        max: ".495 - above",
+        mean: ".463 - .494",
+        min: "0 - .462"
+    };
+};
+
+// Get the radius for a symbol based on the attribute gini
+function getRadius(gini){
+    // Used Natural Breaks (Jenks) for gini 2018 values
+    // 0 - .462 | .463 - .494 | .495 - above
+    if (gini <= .462){
+        return 8;
+    }
+    else if (gini > .462 && gini <= .494){
+        return 16;
+    }
+    else {
+        return 24;
+    }
+}
+
+// assign the properties to the symbols including the radius
+function createSymbol(feature){
+    // Attribute is a global variable retreived from the date slider
+    var gini = Number(feature.properties[attribute]);
+    // Sets the options for the marker including radius
+    var geojsonMarkerOptions = {
+        radius: getRadius(gini),
+        fillColor: "#ff7800",
+        color: "#000",
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8
+    };
+    return geojsonMarkerOptions;
+};
+
+// create the popup content
+function getPopup(feature){
+    var popupContent = "";
+    popupContent += "<p>" + "State" + ": " + feature.properties["stateName"] + "</p>";
+    popupContent += "<p>" + "Gini " + year + ": " + feature.properties[attribute] + "</p>";
+
+    return popupContent;
+};
+
 
 //define AJAX function
 function jQueryAjaxStates(){
@@ -165,109 +231,95 @@ function createLayer(response, status, jqXHRobject){
         }
     });
     activeLayer.addTo(map);
-
-    // activeLayer.on({
-    //     mouseover: function(){
-    //         //this.openPopup();
-    //         console.log(this);
-    //     },
-    //     mouseout: function(){
-    //         //this.closePopup();
-    //         console.log(this);
-    //     }
-    // });
-
 };
 
-// create the popup content
-function getPopup(feature){
-    var popupContent = "";
-    popupContent += "<p>" + "State" + ": " + feature.properties["stateName"] + "</p>";
-    popupContent += "<p>" + "Gini " + year + ": " + feature.properties[attribute] + "</p>";
+// create the slider on the map
+function createSequenceControls(map, attributes){   
+    var SequenceControl = L.Control.extend({
+        options: {
+            position: 'bottomleft'
+        },
 
-    return popupContent;
-};
+        onAdd: function (map) {
+            // create the control container div with a particular class name
+            var container = L.DomUtil.create('div', 'sequence-control-container');
 
-// assign the properties to the symbols including the radius
-function createSymbol(feature){
-    // Attribute is a global variable retreived from the date slider
-    var gini = Number(feature.properties[attribute]);
-    // Sets the options for the marker including radius
-    var geojsonMarkerOptions = {
-        radius: getRadius(gini),
-        fillColor: "#ff7800",
-        color: "#000",
-        weight: 1,
-        opacity: 1,
-        fillOpacity: 0.8
-    };
-    return geojsonMarkerOptions;
-};
+            $(container).append('<button class = "mapControls" id="back"><i class="fa fa-step-backward"></i></button>');
 
-// Get the radius for a symbol based on the attribute gini
-function getRadius(gini){
-    // Used Natural Breaks (Jenks) for gini 2018 values
-    // 0 - .462 | .463 - .494 | .495 - above
-    if (gini <= .462){
-        return 8;
-    }
-    else if (gini > .462 && gini <= .494){
-        return 16;
-    }
-    else {
-        return 24;
-    }
+            //create range input element (slider)
+            $(container).append('<input class="range-slider mapControls" min="1990" max="2018" value="1" type="range" id="mapSlider">');
+
+            $(container).append('<button class = "mapControls" id="forward"><i class="fa fa-step-forward"></i></button>');
+            $(container).append('<button id="play"><i class="fa fa-play"></i></button>');
+
+            // If the user double clicks prevent zooming in 
+            $(container).on('dblclick', function(e){
+                L.DomEvent.stopPropagation(e);
+            });
+
+            // Prevents the map from moving when the slider is being dragged
+            $(container).on('mousedown', function(e){
+                map.dragging.disable();
+            });
+            $(container).on('mouseup', function(e){
+                map.dragging.enable();
+            });
+
+
+            return container;
+        }
+    });
+
+    map.addControl(new SequenceControl());
 }
 
-$("#back").click(function(){
-    if (year > 1990){
-        year = Number(year) - 1;
-        updateYear(year);
-    }
-    // console.log("button clicked");
-});
+function createLegend(map, attributes){
+    var LegendControl = L.Control.extend({
+        options: {
+            position: 'bottomright'
+        },
 
-$("#forward").click(function(){
-    if (year < 2018){
-        year = Number(year) + 1;
-        updateYear(year);
-    }
-    // console.log("button clicked");
+        onAdd: function (map) {
+            // create the control container with a particular class name
+            var container = L.DomUtil.create('div', 'legend-control-container');
+            $(container).append('<p class = "legendText">Year <span id="legendYear">1990</span></p>');
 
-});
+            //add temporal legend div to container
+            $(container).append('<div id="temporal-legend">')
 
-function updateYear(year){
-    //year = dateSlider.value;
-    dateSlider.value = year;
-    attribute = "gini" + year;
-    //check for layer
-    if(activeLayer){
-        //remove old layer
-        map.removeLayer(activeLayer);
-        //add new layer
-        jQueryAjaxStates();
-    }
-    else {
-        jQueryAjaxStates();
-    }
-    $("#featureInfo").html("");
-    //$(".legend-control-container").html("Year " + dateSlider.value);
+            //Step 1: start attribute legend svg string
+            var svg = '<svg id="attribute-legend" width="160px" height="60px">';
+
+            // object of circles to base loop on
+            var circles = {
+                max: 20,
+                mean: 40,
+                min: 60
+            };
+    
+
+            //Step 2: loop to add each circle and text to svg string
+            for (var circle in circles){
+                //circle string
+                svg += '<circle class="legend-circle" id="' + circle + '" fill="#F47821" fill-opacity="0.8" stroke="#000000" cx="30"/>';
+    
+                //text string
+                svg += '<text id="' + circle + '-text" x="65" y="' + circles[circle] + '"></text>';
+            };
+
+            //close svg string
+            svg += "</svg>";
+
+            //add attribute legend svg to container
+            $(container).append(svg);
+
+            return container;
+        }
+    });
+
+    map.addControl(new LegendControl());
+    updateLegend(year);
 };
 
-
-function createLegendCircle(diameter){
-    //Step 1: start attribute legend svg string
-    var svg = '<svg x="0px" y="0px"'
-    svg += 'width="' + diameter + 'px" height="'+diameter +'px" viewBox="0 0 180 180" enable-background="new 0 0 180 180" xml:space="preserve">'
-    svg+= '<g opacity="0.8">'
-    svg += '<circle fill="#FF7800" cx="90" cy="90" r="90"/>'
-    svg += '<path d="M90,1c49.0748,0,89,39.9252,89,89s-39.9252,89-89,89S1,139.0748,1,90S40.9252,1,90,1 M90,0C40.2944,0,0,40.2944,0,90'
-    svg += 's40.2944,90,90,90s90-40.2944,90-90S139.7056,0,90,0L90,0z"/></g></svg>';
-
-    return svg;
-};
-
-
-$("#mapSlider").change(function(){
-    console.log(this.value);
-});
+// END DEFINE FUNCTIONS
+// --------------------------------------------------------------------------
