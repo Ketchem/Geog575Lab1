@@ -31,6 +31,9 @@ map.addLayer(mapboxTiles)
 createSequenceControls(map);
 // Creates the temporal legend and Symbols
 createLegend(map);
+// Creates the reset map button and immediately hides it
+createResetControl(map);
+$("#resetMap").hide();
 // END BUILD MAP
 // --------------------------------------------------------------------------
 
@@ -78,23 +81,48 @@ $("#forward").click(function(){
 
 });
 
+$(".legend-circle").mouseover(function(){
+    this.setAttribute("stroke","#f4f142");
+});
+
+$(".legend-circle").mouseout(function(){
+    this.setAttribute("stroke","#000000");
+});
+
 $("#max").click(function(){
+    $("#min")[0].setAttribute("fill-opacity","0.2");
+    $("#mean")[0].setAttribute("fill-opacity","0.2");
+    $("#max")[0].setAttribute("fill-opacity","0.8");
     filterVal = 3;
+    $("#resetMap").show();
     updateMap(year);
 });
 
 $("#mean").click(function(){
+    $("#min")[0].setAttribute("fill-opacity","0.2");
+    $("#mean")[0].setAttribute("fill-opacity","0.8");
+    $("#max")[0].setAttribute("fill-opacity","0.2");
     filterVal = 2;
+    $("#resetMap").show();
     updateMap(year);
 });
 
 $("#min").click(function(){
+    $("#min")[0].setAttribute("fill-opacity","0.8");
+    $("#mean")[0].setAttribute("fill-opacity","0.2");
+    $("#max")[0].setAttribute("fill-opacity","0.2");
     filterVal = 1;
+    $("#resetMap").show();
     updateMap(year);
 });
 
 $("#resetMap").click(function(){
-    alert("Clicked!");
+    $("#min")[0].setAttribute("fill-opacity","0.8");
+    $("#mean")[0].setAttribute("fill-opacity","0.8");
+    $("#max")[0].setAttribute("fill-opacity","0.8");
+    filterVal = 0;
+    $("#resetMap").hide();
+    updateMap(year);
 });
 
 // END ADD EVENT LISTENERS
@@ -155,9 +183,9 @@ function getCircleRadii(){
 
 function getCircleValues(){
     return {
-        max: ".495 - above",
+        max: ".495 - .567",
         mean: ".463 - .494",
-        min: "0 - .462"
+        min: ".362 - .462"
     };
 };
 
@@ -283,7 +311,7 @@ function createSequenceControls(map, attributes){
             $(container).append('<input class="range-slider mapControls" min="1990" max="2018" value="1" type="range" id="mapSlider">');
 
             $(container).append('<button class = "mapControls" id="forward"><i class="fa fa-step-forward"></i></button>');
-            $(container).append('<button id="play"><i class="fa fa-play"></i></button>');
+            // $(container).append('<button id="play"><i class="fa fa-play"></i></button>');
 
             // If the user double clicks prevent zooming in 
             $(container).on('dblclick', function(e){
@@ -354,6 +382,30 @@ function createLegend(map, attributes){
     updateLegend(year);
 };
 
+// create the slider on the map
+function createResetControl(map, attributes){   
+    var SequenceControl = L.Control.extend({
+        options: {
+            position: 'topright'
+        },
+
+        onAdd: function (map) {
+            // create the control container div with a particular class name
+            var container = L.DomUtil.create('div', 'reset-control-container');
+
+            $(container).append('<button class = "mapControls" id="resetMap">Remove Filter</button>');
+
+            // If the user double clicks prevent zooming in 
+            $(container).on('dblclick', function(e){
+                L.DomEvent.stopPropagation(e);
+            });
+
+            return container;
+        }
+    });
+
+    map.addControl(new SequenceControl());
+}
 
 // END DEFINE FUNCTIONS
 // --------------------------------------------------------------------------
