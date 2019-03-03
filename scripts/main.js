@@ -90,36 +90,36 @@ $(".legend-circle").mouseout(function(){
 });
 
 $("#max").click(function(){
-    $("#min")[0].setAttribute("fill-opacity","0.2");
-    $("#mean")[0].setAttribute("fill-opacity","0.2");
-    $("#max")[0].setAttribute("fill-opacity","0.8");
+    $("#min")[0].setAttribute("fill","#ffdcbf");
+    $("#mean")[0].setAttribute("fill","#ffdcbf");
+    $("#max")[0].setAttribute("fill","#ff7800");
     filterVal = 3;
     $("#resetMap").show();
     updateMap(year);
 });
 
 $("#mean").click(function(){
-    $("#min")[0].setAttribute("fill-opacity","0.2");
-    $("#mean")[0].setAttribute("fill-opacity","0.8");
-    $("#max")[0].setAttribute("fill-opacity","0.2");
+    $("#min")[0].setAttribute("fill","#ffdcbf");
+    $("#max")[0].setAttribute("fill","#ffdcbf");
+    $("#mean")[0].setAttribute("fill","#ff7800");
     filterVal = 2;
     $("#resetMap").show();
     updateMap(year);
 });
 
 $("#min").click(function(){
-    $("#min")[0].setAttribute("fill-opacity","0.8");
-    $("#mean")[0].setAttribute("fill-opacity","0.2");
-    $("#max")[0].setAttribute("fill-opacity","0.2");
+    $("#max")[0].setAttribute("fill","#ffdcbf");
+    $("#mean")[0].setAttribute("fill","#ffdcbf");
+    $("#min")[0].setAttribute("fill","#ff7800");
     filterVal = 1;
     $("#resetMap").show();
     updateMap(year);
 });
 
 $("#resetMap").click(function(){
-    $("#min")[0].setAttribute("fill-opacity","0.8");
-    $("#mean")[0].setAttribute("fill-opacity","0.8");
-    $("#max")[0].setAttribute("fill-opacity","0.8");
+    $("#min")[0].setAttribute("fill","#ff7800");
+    $("#mean")[0].setAttribute("fill","#ff7800");
+    $("#max")[0].setAttribute("fill","#ff7800");
     filterVal = 0;
     $("#resetMap").hide();
     updateMap(year);
