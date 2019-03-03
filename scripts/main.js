@@ -246,7 +246,7 @@ function getPoints(){
 function createLayer(response, status, jqXHRobject){
     // get the features
     var features = response;
-    console.log(features);
+    // console.log(features);
     if (filterVal === 1){
         
     }
