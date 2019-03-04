@@ -82,7 +82,7 @@ $("#forward").click(function(){
 });
 
 $(".legend-circle").mouseover(function(){
-    this.setAttribute("stroke","#f4f142");
+    this.setAttribute("stroke","#42e8f4");
 });
 
 $(".legend-circle").mouseout(function(){
